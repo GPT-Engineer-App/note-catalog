@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { DndContext, closestCenter } from "@dnd-kit/core";
 import { arrayMove, SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { SortableItem } from "@/components/SortableItem";
+import { Trash2 } from "lucide-react";
 
 const Index = () => {
   const [notes, setNotes] = useState([]);
@@ -19,6 +20,13 @@ const Index = () => {
       setNotes([...notes, { id: notes.length, title: noteTitle, content: noteContent }]);
       setNoteTitle("");
       setNoteContent("");
+    }
+  };
+
+  const deleteNote = (id) => {
+    setNotes(notes.filter(note => note.id !== id));
+    if (selectedNote && selectedNote.id === id) {
+      setSelectedNote(null);
     }
   };
 
@@ -42,10 +50,13 @@ const Index = () => {
           <SortableContext items={notes} strategy={verticalListSortingStrategy}>
             {notes.map((note) => (
               <SortableItem key={note.id} id={note.id}>
-                <Card className="mb-2 cursor-pointer" onClick={() => setSelectedNote(note)}>
+                <Card className="mb-2 cursor-pointer flex justify-between items-center" onClick={() => setSelectedNote(note)}>
                   <CardHeader>
                     <CardTitle>{note.title}</CardTitle>
                   </CardHeader>
+                  <Button variant="ghost" onClick={(e) => { e.stopPropagation(); deleteNote(note.id); }}>
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
                 </Card>
               </SortableItem>
             ))}
